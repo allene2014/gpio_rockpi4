@@ -1,4 +1,6 @@
 from periphery import GPIO
+import sys
+import json 
 #import paho.mqtt.client as mqtt #test mqtt 
 
 pins_ps = \
@@ -32,40 +34,39 @@ def set_pins(pins):
         gpio_object.close()
     except ValueError:
       print(f"{pin} no es un número válido")
-def comunicationPy(rk1, rk2, rk3) #rk1 pines a encender "1,2,3" #k2 status bool "1,0" # Reset pines (s/n)
-    # Definimos una lista vacía donde almacenaremos los objetos correspondientes a cada pin.
-    pins_data = []
-    #rock_pins = [75,131,149,154,156,157,74,73,112,76,133,132,158,134,135] #pines GPIO documentacion
-    rock_pins = [75,149,154,157,74,73,112,76,158]
+# Definimos una lista vacía donde almacenaremos los objetos correspondientes a cada pin.
+pins_data = []
+#rock_pins = [75,131,149,154,156,157,74,73,112,76,133,132,158,134,135] #pines GPIO documentacion
+rock_pins = [75,149,154,157,74,73,112,76,158]
     
-    for rpin in rock_pins:
-        try:
-            gpio_object = GPIO(int(rpin),"out")
-            pins_data.append({
-                'number': int(rpin),
-                'status': get_pin_status(rpin)
-            })
-            gpio_object.close()
-        except ValueError:
-          print(f"{rpin} no es un número válido")
-        print(f"PIN {rpin} agregado correctamente.")
-    
-    print("Datos finales:")
-    # Recorremos el objeto para asignar al usuario una vista de los puertos y su status
-    for data in pins_data:
-        pnr = data['number']
-        pns = data['status']
-        print(f"Pin: {pins_ps.get(str(pnr))} - Estado: {'Encendido' if pins_ps.get(str(pns)) else 'Apagado'}")
-    
-    # Solicitamos al usuario los pines a encender y su estado.
-    pins_to_set = input("Ingrese lista de pines a encender separados por coma (Ejemplo: 1,2,3): ")
-    desired_state = input("Estado deseado (0 para apagado o 1 para encendido): ")
-    
-    # Creamos una lista de diccionarios donde cada uno representa un pin a configurar junto con su estado deseado.
-    pins_to_set_list = [{'number': int(x), 'status': bool(int(desired_state))} for x in pins_to_set.split(',')]
-    
-    # Configuramos los pines según corresponda utilizando la función set_pins definida anteriormente.
-    set_pins(pins_to_set_list)
+for rpin in rock_pins:
+    try:
+        gpio_object = GPIO(int(rpin),"out")
+        pins_data.append({
+            'number': int(rpin),
+            'status': get_pin_status(rpin)
+        })
+        gpio_object.close()
+    except ValueError:
+      print(f"{rpin} no es un número válido")
+    print(f"PIN {rpin} agregado correctamente.")
+
+print("Datos finales:")
+# Recorremos el objeto para asignar al usuario una vista de los puertos y su status
+for data in pins_data:
+    pnr = data['number']
+    pns = data['status']
+    print(f"Pin: {pins_ps.get(str(pnr))} - Estado: {'Encendido' if pins_ps.get(str(pns)) else 'Apagado'}")
+
+# Solicitamos al usuario los pines a encender y su estado.
+pins_to_set = input("Ingrese lista de pines a encender separados por coma (Ejemplo: 1,2,3): ")
+desired_state = input("Estado deseado (0 para apagado o 1 para encendido): ")
+
+# Creamos una lista de diccionarios donde cada uno representa un pin a configurar junto con su estado deseado.
+pins_to_set_list = [{'number': int(x), 'status': bool(int(desired_state))} for x in pins_to_set.split(',')]
+
+# Configuramos los pines según corresponda utilizando la función set_pins definida anteriormente.
+set_pins(pins_to_set_list)
 
 # Agregamos una nueva función que resetea todos los pines activos a su estado por defecto (apagados).
 def reset_pins():
