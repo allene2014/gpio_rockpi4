@@ -9,7 +9,7 @@ st = argumentos[1]
 rock_pins = [75,149,154,157,74,73,112,76,158]
 def controlar_dispositivo(pi, st):
 
-    pin = pi.strip(',')  # Eliminar comas y otros caracteres no deseados
+    pin = pi.strip(',')  # Elimino comas y otros caracteres no deseados
     pin_int = int(pin)
 
     # Verificar si el PIN es correcto
